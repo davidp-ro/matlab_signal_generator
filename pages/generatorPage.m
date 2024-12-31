@@ -82,7 +82,7 @@ function bottomPanel(generatorContainer, leftCol, ax, signals, signalTexts, sign
         disp("addSignal -> Adding: " + harmonicStr);
 
         signalTexts = [signalTexts, harmonicStr];
-        signalDefs = [signalDefs, harmonic];
+        signalDefs = signalDefs + harmonic;
 
         signals.Items = signalTexts;
         signals.ItemsData = signalDefs;
@@ -95,7 +95,12 @@ function bottomPanel(generatorContainer, leftCol, ax, signals, signalTexts, sign
     addButton.Layout.Column = 1;
     addButton.Text = "Add Signal";
 
-    removeButton = uibutton(col);
+    function removeSignal()
+        % todo: maybe reconstruct the harmonic from the string
+        % representation and substract it?
+    end
+
+    removeButton = uibutton(col, "ButtonPushedFcn", @(src, ev) removeSignal());
     removeButton.Layout.Row = 3;
     removeButton.Layout.Column = 1;
     removeButton.Text = "Remove Selected Signal";
