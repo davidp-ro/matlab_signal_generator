@@ -17,7 +17,7 @@ function homePage()
 
     buttons();
 
-    footer(mainContainer);
+    footer();
 end
 
 %% getLeftPad
@@ -108,7 +108,7 @@ end
 
 %% footer
 % Adds the footer text to the bottom of the page
-function footer(mainContainer)
+function footer()
     uicontrol('Style','text', ...
         'Fontsize', 12, ...
         'Position',[0 0 1000 40], ...
