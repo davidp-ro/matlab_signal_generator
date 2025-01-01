@@ -9,9 +9,12 @@ function generatorPage()
     );
 
     % --- Logic ---
-
-    signalTexts = ["Add Signals using the Controls below"];
+    
+    [initText, initDef] = getInitialSignal();
+    
+    signalTexts = initText;
     signalDefs = zeros(size(getTimeVector));
+    signalDefs = signalDefs + initDef;
 
     % --- UI ---
 
@@ -35,17 +38,20 @@ function generatorPage()
     % >> [Left Column] Signal List
     signals = uilistbox(leftCol);
     signals.Items = signalTexts;
-    signals.ItemsData = signalDefs;
     signals.Layout.Row = 1;
     signals.Layout.Column = 1;
 
     % >> [Left Column] Control Panel
-    bottomPanel(generatorContainer, leftCol, ax, signals, signalTexts, signalDefs);
+    bottomPanel(generatorContainer, leftCol, ax, signals, ...
+        signalTexts, signalDefs ...
+    );
 end
 
 %% buttons
 % Add the control panel to the left column + callbacks
-function bottomPanel(generatorContainer, leftCol, ax, signals, signalTexts, signalDefs)
+function bottomPanel(generatorContainer, leftCol, ax, signals, ...
+    signalTexts, signalDefs ...
+)
     col = uigridlayout(leftCol);
     col.RowHeight = {130, '1x', '1x'};
     col.ColumnWidth = {'1x'};
@@ -85,8 +91,6 @@ function bottomPanel(generatorContainer, leftCol, ax, signals, signalTexts, sign
         signalDefs = signalDefs + harmonic;
 
         signals.Items = signalTexts;
-        signals.ItemsData = signalDefs;
-
         plotSignals(ax, signalDefs);
     end
 
@@ -96,8 +100,34 @@ function bottomPanel(generatorContainer, leftCol, ax, signals, signalTexts, sign
     addButton.Text = "Add Signal";
 
     function removeSignal()
-        % todo: maybe reconstruct the harmonic from the string
-        % representation and substract it?
+        selectedSignal = signals.Value;
+        disp("removeSignal -> Remove: " + selectedSignal);
+
+        if length(signalTexts) < 2
+            uialert(generatorContainer, "At least one signal is required at all times.", "Unable to remove");
+            return;
+        end
+        
+        t = getTimeVector;
+        initSignalTexts = signalTexts;
+        signalTexts = [];
+        signalDefs = zeros(size(getTimeVector));
+
+        for k = 1:length(initSignalTexts)
+            sig = initSignalTexts(k);
+
+            % Keep all signals, except the one we're removing
+            if sig ~= selectedSignal
+                signalTexts = [signalTexts, sig];
+                signalDefs = signalDefs + createHarmonicFromString(sig, t);
+            end
+        end
+
+        % Update signal list & plot
+        signals.Items = signalTexts;
+        plotSignals(ax, signalDefs);
+
+        disp("removeSignal -> Done");
     end
 
     removeButton = uibutton(col, "ButtonPushedFcn", @(src, ev) removeSignal());
@@ -109,13 +139,13 @@ end
 %% getSamplingFreq
 % Returns the Sampling Frequency, Fs [Hz]
 function Fs = getSamplingFreq()
-    Fs = 1e4;
+    Fs = 1e5;
 end
 
 %% getSamplingTime
 % Returns the Sampling Duration, T [s]
 function T = getSamplingTime()
-    T = 1/4;
+    T = 1/10;
 end
 
 %% getTimeVector
@@ -128,9 +158,20 @@ function t = getTimeVector()
     t = 0:1/Fs:T;
 end
 
+%% getInitialSignal
+% Sets an initial, default signal to have the plot populated
+function [text, def] = getInitialSignal()
+    A = 1; f = 100; t = getTimeVector;
+    text = createHarmonicString(A, f, t, 0);
+    def = createHarmonic(A, f, t, 0);
+end
+
 %% plotSignals
 % Plot the signals from signalDefs
 function plotSignals(ax, signalDefs)
     t = getTimeVector;
-    p = plot(ax, t, signalDefs);
+    % legend(ax, "on");
+    plot(ax, t, signalDefs, "DisplayName", "x(t)", "Marker", "*");
+    % hold(ax, "on");
+    % plot(ax, t, signalDefs * 2);
 end
