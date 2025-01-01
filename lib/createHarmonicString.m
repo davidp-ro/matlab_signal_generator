@@ -1,5 +1,5 @@
 %% createHarmonicString
-% Create a string to represent a harmonic: A * (2 * π * f * t) + ϕ
+% Create a string to represent a harmonic: A × cos(2 × π × f × t) + ϕ
 % 
 % Inputs:
 %   A   - Amplitude, >= 1, numeric
@@ -18,8 +18,8 @@ function s = createHarmonicString(A, f, t, phi)
     end
 
     if phi ~= 0
-        s = A + " * " + "(2 * π * " + f + " * t) + " + phi;
+        s = A + " × " + "cos(2 × π × " + f + " × t) + " + phi;
     else
-        s = A + " * " + "(2 * π * " + f + " * t)";
+        s = A + " × " + "cos(2 × π × " + f + " × t)";
     end
 end

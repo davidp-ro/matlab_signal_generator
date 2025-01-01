@@ -1,5 +1,5 @@
 %% createHarmonic
-% Create a harmonic signal using the formula: x(t) = A * (2 * π * f * t) + ϕ
+% Create a harmonic signal using the formula: x(t) = A * cos(2 * π * f * t) + ϕ
 % 
 % Inputs:
 %   A   - Amplitude, >= 1, numeric
