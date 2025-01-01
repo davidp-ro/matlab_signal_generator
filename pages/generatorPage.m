@@ -33,7 +33,7 @@ function generatorPage()
     ax.Layout.Column = 2;
     ax.XGrid = "on";
     ax.YGrid = "on";
-    plotSignals(ax, signalDefs);
+    plotSignals(ax, signalTexts, signalDefs);
 
     % >> [Left Column] Signal List
     signals = uilistbox(leftCol);
@@ -91,7 +91,7 @@ function bottomPanel(generatorContainer, leftCol, ax, signals, ...
         signalDefs = signalDefs + harmonic;
 
         signals.Items = signalTexts;
-        plotSignals(ax, signalDefs);
+        plotSignals(ax, signalTexts, signalDefs);
     end
 
     addButton = uibutton(col, "ButtonPushedFcn", @(src, ev) addSignal());
@@ -125,7 +125,7 @@ function bottomPanel(generatorContainer, leftCol, ax, signals, ...
 
         % Update signal list & plot
         signals.Items = signalTexts;
-        plotSignals(ax, signalDefs);
+        plotSignals(ax, signalTexts, signalDefs);
 
         disp("removeSignal -> Done");
     end
@@ -168,10 +168,22 @@ end
 
 %% plotSignals
 % Plot the signals from signalDefs
-function plotSignals(ax, signalDefs)
+function plotSignals(ax, signalTexts, signalDefs)
     t = getTimeVector;
-    % legend(ax, "on");
-    plot(ax, t, signalDefs, "DisplayName", "x(t)", "Marker", "*");
-    % hold(ax, "on");
-    % plot(ax, t, signalDefs * 2);
+    legend(ax);
+
+    hold(ax, "off"); % Reset plot
+
+    % Plot the resulting harmonic:
+    plot(ax, t, signalDefs, "DisplayName", "x(t) - Resulting Harmonic", "Marker", "*");
+    hold(ax, "on");
+
+    % Plot the used harmonics:
+    for k = 1:length(signalTexts)
+        sigText = signalTexts(k);
+        sig = createHarmonicFromString(sigText, t);
+
+        plot(ax, t, sig, "DisplayName", sigText, "LineWidth", 1.5);
+        hold(ax, "on");
+    end
 end
