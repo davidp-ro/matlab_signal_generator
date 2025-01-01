@@ -15,6 +15,7 @@ function homePage()
     title();
     subtitle();
 
+    harmonicsImage(mainContainer);
     buttons(mainContainer);
 
     footer();
@@ -75,6 +76,20 @@ function subtitleText = subtitle()
         'HorizontalAlignment', 'left', ...
         'String','Generate a signal composed of one or more harmonics.' ...
     );
+end
+
+%% harmonicsImage
+% Adds the "harmonics" image to the page
+function harmonicsImage(mainContainer)
+    ax = uiaxes(mainContainer, ...
+        'Position', [600 250 380 300], ...
+        'Color', '#f0f0f0', ...
+        'MinorGridLineStyle', 'none' ...
+    );
+    axis(ax, "off");
+    [img, ~, alphachannel] = imread('harmonics-nobg.png');
+    % Image Credit: https://electronics.stackexchange.com/a/32314
+    image(img, 'AlphaData', alphachannel, 'Parent', ax);
 end
 
 %% buttons

@@ -1,3 +1,4 @@
+clc;
 close all;
 
 homePage();
